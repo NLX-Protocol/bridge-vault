@@ -1,0 +1,43 @@
+{
+  "name": "bridge-vault",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "lint": "solhint 'contracts/**/*.sol'",
+    "node": "hardhat node",
+    "deploy": "hardhat run scripts/deploy.js",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost",
+    "verify": "hardhat verify",
+    "bridge-test": "node scripts/test-bridge-v6.js",
+    "fetch-price": "node scripts/fetch-pyth-updates.js",
+    "execute-bridge": "node scripts/execute-bridge-cli.js",
+    "whitelist-token": "node scripts/whitelist-token-cli.js"
+  },
+  "keywords": [
+    "ethereum",
+    "solidity",
+    "bridge",
+    "vault"
+  ],
+  "author": "",
+  "license": "MIT",
+  "description": "A bridge vault contract for cross-chain token transfers",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^5.2.0",
+    "dotenv": "^16.4.7",
+    "hardhat": "^2.22.19",
+    "solhint": "^5.0.5"
+  },
+  "dependencies": {
+    "@pythnetwork/hermes-client": "^1.0.1",
+    "@pythnetwork/pyth-sdk-solidity": "^4.0.0",
+    "axios": "^1.8.1",
+    "ora": "^8.2.0"
+  }
+}
