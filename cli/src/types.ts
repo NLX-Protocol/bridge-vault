@@ -1,19 +1,27 @@
 import { ethers } from 'ethers';
 
+export interface ContractSet {
+  vault: string;
+  bridge: string;
+  pythOracle: string;
+}
+
+export interface TokenWhitelist {
+  [tokenAddress: string]: string; // token address -> price feed id
+}
+
 export interface NetworkConfig {
   rpcUrl: string;
   chainId: number;
   name: string;
+  contracts?: ContractSet;
+  tokenWhitelist?: TokenWhitelist;
 }
 
 export interface Config {
   networks: {
     [key: string]: NetworkConfig;
   };
-  contracts: {
-    [key: string]: string;
-  };
-  privateKey?: string;
 }
 
 export interface TokenInfo {

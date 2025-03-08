@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import { VaultContract } from '../contract';
+import { getTokenWhitelist, setTokenWhitelist } from '../config';
 import ora from 'ora';
 import chalk from 'chalk';
 
@@ -8,37 +9,46 @@ export function tokenCommand(): Command {
     .description('Manage whitelisted tokens');
 
   command
-    .command('whitelist')
-    .description('Whitelist a token')
+    .command('update-whitelist')
+    .description('Update token whitelist from config')
     .requiredOption('--network <network>', 'Network name')
-    .requiredOption('--token <address>', 'Token address')
-    .requiredOption('--price-id <bytes32>', 'Pyth price feed ID')
     .action(async (options) => {
-      const spinner = ora('Whitelisting token...').start();
+      const spinner = ora('Updating token whitelist...').start();
       try {
         const vault = new VaultContract(options.network);
-        await vault.whitelistToken(options.token, options.priceId);
-        spinner.succeed(chalk.green(`Token ${options.token} whitelisted with price feed ${options.priceId}`));
+        await vault.updateWhitelist();
+        
+        // Get current whitelist status
+        const currentWhitelist = await vault.getWhitelistedTokens();
+        
+        spinner.succeed(chalk.green('Token whitelist updated'));
+        console.log('\nCurrent whitelist:');
+        for (const [token, priceId] of Object.entries(currentWhitelist)) {
+          console.log(chalk.blue(`${token}: ${priceId}`));
+        }
       } catch (error) {
-        spinner.fail(chalk.red('Failed to whitelist token'));
+        spinner.fail(chalk.red('Failed to update token whitelist'));
         console.error(error);
         process.exit(1);
       }
     });
 
   command
-    .command('remove')
-    .description('Remove a token from whitelist')
+    .command('show')
+    .description('Show current token whitelist')
     .requiredOption('--network <network>', 'Network name')
-    .requiredOption('--token <address>', 'Token address')
     .action(async (options) => {
-      const spinner = ora('Removing token from whitelist...').start();
+      const spinner = ora('Fetching token whitelist...').start();
       try {
         const vault = new VaultContract(options.network);
-        await vault.removeToken(options.token);
-        spinner.succeed(chalk.green(`Token ${options.token} removed from whitelist`));
+        const whitelist = await vault.getWhitelistedTokens();
+        
+        spinner.succeed(chalk.green('Current token whitelist:'));
+        for (const [token, priceId] of Object.entries(whitelist)) {
+          console.log(chalk.blue(`${token}: ${priceId}`));
+        }
       } catch (error) {
-        spinner.fail(chalk.red('Failed to remove token'));
+        spinner.fail(chalk.red('Failed to fetch token whitelist'));
         console.error(error);
         process.exit(1);
       }

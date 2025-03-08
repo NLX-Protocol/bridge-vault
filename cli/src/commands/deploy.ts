@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import { VaultContract } from '../contract';
-import { setContractAddress } from '../config';
+import { setContractSet } from '../config';
 import ora from 'ora';
 import chalk from 'chalk';
 
@@ -21,7 +21,11 @@ export function deployCommand(): Command {
           options.pythOracle
         );
         
-        setContractAddress('vault', address);
+        setContractSet(options.network, {
+          vault: address,
+          bridge: options.bridgeContract,
+          pythOracle: options.pythOracle
+        });
         
         spinner.succeed(chalk.green(`Vault contract deployed at: ${address}`));
       } catch (error) {
